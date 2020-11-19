@@ -164,3 +164,9 @@
       displayText: "Generated SSH Private Key"
       type: copyableString
       visible: true
+
+      loadbalancer_public_url:
+      title: "Loadbalancer Public URL"
+      displayText: "Loadbalancer Public URL"
+      type: string
+      visible: true
