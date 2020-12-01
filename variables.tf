@@ -10,11 +10,6 @@ variable "private_key_path" {}
 variable "region" {}
 variable "ATP_password" {}
 
-# Specify any Default Value's here
-
-#variable "availability_domain" {
-#  default = "3"
-#}
 variable "availablity_domain_name" {}
 
 # OS Images
@@ -31,6 +26,10 @@ variable "linux_os_version" {
 variable "instance_shape" {
   description = "Instance Shape"
   default     = "VM.Standard2.1"
+}
+
+variable "lb_shape" {
+  default = "100Mbps"
 }
 
 /*
