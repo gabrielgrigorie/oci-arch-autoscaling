@@ -6,7 +6,8 @@
 # Create Compute Instance
 
 resource "oci_core_instance" "compute_instance1" {
-  availability_domain = data.oci_identity_availability_domains.ads.availability_domains[var.availability_domain - 2]["name"]
+#  availability_domain = data.oci_identity_availability_domains.ads.availability_domains[var.availability_domain - 2]["name"]
+  availability_domain = var.availablity_domain_name
   compartment_id      = var.compartment_ocid
   display_name        = "Web-Server-1"
   shape               = var.instance_shape
@@ -70,7 +71,8 @@ resource "oci_core_instance_pool" "instance_pool" {
     compartment_id = var.compartment_ocid
     instance_configuration_id = oci_core_instance_configuration.instance_configuration.id  
     placement_configurations {
-        availability_domain = data.oci_identity_availability_domains.ads.availability_domains[var.availability_domain - 2]["name"]
+        #availability_domain = data.oci_identity_availability_domains.ads.availability_domains[var.availability_domain - 2]["name"]
+        availability_domain = var.availablity_domain_name
         primary_subnet_id = oci_core_subnet.subnet_2.id
 
     }
