@@ -7,5 +7,6 @@ resource "oci_core_internet_gateway" "ig" {
   compartment_id = var.compartment_ocid
   display_name   = "ig-gateway"
   vcn_id         = oci_core_virtual_network.vcn.id
+  defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 

@@ -31,6 +31,7 @@ resource "oci_core_instance" "compute_instance1" {
   timeouts {
     create = "60m"
   }
+  defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 # Create Instacne Image
@@ -39,6 +40,7 @@ resource "oci_core_image" "flask_instance_image" {
     depends_on = [null_resource.compute-script1]
     compartment_id = var.compartment_ocid
     instance_id = oci_core_instance.compute_instance1.id
+    defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 # Create Instacne Configuration
@@ -63,6 +65,7 @@ resource "oci_core_instance_configuration" "instance_configuration" {
             }        
         }
     }
+    defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 # Create Instance Pool
@@ -84,6 +87,7 @@ resource "oci_core_instance_pool" "instance_pool" {
         port = "5000"
         vnic_selection = "PrimaryVnic"
     }
+    defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 # Create Autoscaling Configuration
@@ -134,4 +138,5 @@ resource "oci_autoscaling_auto_scaling_configuration" "autoscaling_configuration
     }
     cool_down_in_seconds = "300"
     display_name = "Threshold_AutoScaling_Configuration"
+    defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }

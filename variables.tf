@@ -12,6 +12,11 @@ variable "ATP_password" {}
 
 variable "availablity_domain_name" {}
 
+variable "release" {
+  description = "Reference Architecture Release (OCI Architecture Center)"
+  default     = "1.0"
+}
+
 # OS Images
 variable "instance_os" {
   description = "Operating system for compute instances"

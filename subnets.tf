@@ -15,6 +15,7 @@ resource "oci_core_subnet" "subnet_1" {
   provisioner "local-exec" {
     command = "sleep 5"
   }
+  defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_core_subnet" "subnet_2" {
@@ -28,6 +29,7 @@ resource "oci_core_subnet" "subnet_2" {
   provisioner "local-exec" {
     command = "sleep 5"
   }
+  defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_core_subnet" "subnet_3" {
@@ -43,5 +45,6 @@ resource "oci_core_subnet" "subnet_3" {
   provisioner "local-exec" {
     command = "sleep 5"
   }
+  defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 

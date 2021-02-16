@@ -7,6 +7,7 @@ resource "oci_core_network_security_group" "ATPSecurityGroup" {
     compartment_id = var.compartment_ocid
     display_name = "ATPSecurityGroup"
     vcn_id = oci_core_virtual_network.vcn.id
+    defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 # Rules related to ATPSecurityGroup
@@ -45,6 +46,7 @@ resource "oci_core_network_security_group" "WebSecurityGroup" {
     compartment_id = var.compartment_ocid
     display_name = "WebSecurityGroup"
     vcn_id = oci_core_virtual_network.vcn.id
+    defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 # Rules related to WebSecurityGroup
@@ -91,6 +93,7 @@ resource "oci_core_network_security_group" "LBSecurityGroup" {
     compartment_id = var.compartment_ocid
     display_name = "LBSecurityGroup"
     vcn_id = oci_core_virtual_network.vcn.id
+    defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 # Rules related to LBSecurityGroup
@@ -127,6 +130,7 @@ resource "oci_core_network_security_group" "SSHSecurityGroup" {
     compartment_id = var.compartment_ocid
     display_name = "SSHSecurityGroup"
     vcn_id = oci_core_virtual_network.vcn.id
+    defined_tags = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 # Rules related to SSHSecurityGroup
