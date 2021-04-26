@@ -13,15 +13,16 @@
       variables:
       - tenancy_ocid
       - release
+      - region
 
     - title: Required Configuration
       visible: true  
       variables:
+      - compartment_ocid
+      - availablity_domain_name 
       - ATP_password
       - ATP_data_guard_enabled
-      - compartment_ocid
-      - region
-      - availablity_domain_name 
+      - ATP_private_endpoint 
       - show_advanced
 
     - title: Load Balancer Optional Configuration
@@ -50,7 +51,6 @@
           and:
             - show_advanced
       variables:
-      - ATP_private_endpoint 
       - ATP_data_guard_enabled
       - ATP_database_cpu_core_count
       - ATP_database_data_storage_size_in_tbs
