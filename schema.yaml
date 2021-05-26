@@ -198,6 +198,9 @@
               - eq:
                 - instance_shape 
                 - "VM.Standard.E4.Flex"
+              - eq:
+                - Shape
+                - "VM.Optimized3.Flex"
 
       instance_flex_shape_memory:
         type: number
@@ -217,6 +220,9 @@
               - eq:
                 - instance_shape
                 - "VM.Standard.E4.Flex"
+              - eq:
+                - Shape
+                - "VM.Optimized3.Flex"  
 
       instance_os:
         type: string
