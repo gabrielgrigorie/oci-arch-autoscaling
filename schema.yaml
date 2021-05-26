@@ -203,7 +203,7 @@
                 - "VM.Optimized3.Flex"
               - eq:
                 - instance_shape
-                - VM.Standard.A1.Flex"
+                - "VM.Standard.A1.Flex"
 
       instance_flex_shape_memory:
         type: number
@@ -228,7 +228,7 @@
                 - "VM.Optimized3.Flex"  
               - eq:
                 - instance_shape
-                - VM.Standard.A1.Flex"
+                - "VM.Standard.A1.Flex"
 
       instance_os:
         type: string
