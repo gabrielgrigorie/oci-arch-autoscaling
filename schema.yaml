@@ -14,6 +14,8 @@
       - tenancy_ocid
       - release
       - region
+      - oracle_instant_client_version
+      - oracle_instant_client_version_short
 
     - title: Required Configuration
       visible: true  
@@ -21,6 +23,7 @@
       - compartment_ocid
       - availablity_domain_name 
       - ATP_password
+      - ATP_free_tier
       - ATP_data_guard_enabled
       - ATP_private_endpoint 
       - show_advanced
@@ -51,7 +54,6 @@
           and:
             - show_advanced
       variables:
-      - ATP_data_guard_enabled
       - ATP_database_cpu_core_count
       - ATP_database_data_storage_size_in_tbs
       - ATP_database_db_name
@@ -105,13 +107,33 @@
         maxLength: 30
         pattern: ^[A-Za-z][A-Za-z0-9_#\$]+$ 
 
+      ATP_free_tier:
+        type: boolean
+        visibile: true
+        default: true
+        required: false
+        title: "ATP Database Free Tier"
+        description: "Check the box to deploy ATP Database Free Tier."
+
       ATP_data_guard_enabled:
         type: boolean
         required: true
-        visible: true
+        title: "ATP DataGuard"
+        description: "Check the box to enable ATP DataGuard."
+        visible: 
+          not:
+            - ${ATP_free_tier}
+
+
+      ATP_private_endpoint:
+        type: boolean
         default: false
-        title: "ATP Database DataGuard Enabled" 
-        description: "Choose if ATP Database DataGuard will be enabled"   
+        required: false
+        title: "ATP Database Private Endpoint"
+        description: "Check the box to deploy ATP Database with Private Endpoint."
+        visible: 
+          not:
+            - ${ATP_free_tier}
 
       # Optional Configuration      
       
@@ -231,26 +253,23 @@
                 - "VM.Standard.A1.Flex"
 
       instance_os:
-        type: string
+        type: enum
         required: false
         title: "Instance OS"
         description: "An Operating System that determines the operating system for the instance."
         default: "Oracle Linux"
+        enum:
+          - "Oracle Linux"
       
       linux_os_version:
-        type: string
+        type: enum
         required: false
         title: "Instance OS version"
         description: "An Operating System version that determines the operating system version for the instance."
-        default: "7.9"
-
-      ATP_private_endpoint:
-        type: boolean
-        visible: true
-        default: false
-        required: false
-        title: "ATP Database Private Endpoint"
-        description: "Check the box to deploy ATP Database with Private Endpoint."
+        default: "8"
+        enum:
+          - "8"
+          - "7.9"
       
       ATP_database_cpu_core_count:
         type: number

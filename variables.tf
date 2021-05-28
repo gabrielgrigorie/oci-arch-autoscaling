@@ -14,7 +14,17 @@ variable "availablity_domain_name" {}
 
 variable "release" {
   description = "Reference Architecture Release (OCI Architecture Center)"
-  default     = "1.2"
+  default     = "1.3"
+}
+
+variable "oracle_instant_client_version" {
+#  default     = "21.1"
+   default     = "19.10"
+}
+
+variable "oracle_instant_client_version_short" {
+#  default     = "21"
+  default     = "19.10"
 }
 
 # OS Images
@@ -57,6 +67,10 @@ variable "flex_lb_max_shape" {
 }
 
 variable "ATP_private_endpoint" {
+  default = true
+}
+
+variable "ATP_free_tier" {
   default = true
 }
 
