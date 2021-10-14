@@ -1,9 +1,63 @@
 ## Copyright © 2020, Oracle and/or its affiliates. 
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
+data "template_file" "bootstrap_template" {
+  template = file("./scripts/bootstrap.sh")
+
+  vars = {
+    ATP_tde_wallet_zip_file             = var.ATP_tde_wallet_zip_file
+    oracle_instant_client_version       = var.oracle_instant_client_version
+    oracle_instant_client_version_short = var.oracle_instant_client_version_short
+  }
+}
+
+data "template_file" "db1_sh_template" {
+  template = file("./db_scripts/db1.sh")
+
+  vars = {
+    ATP_password                        = var.ATP_password
+    ATP_alias                           = join("",[var.ATP_database_db_name,"_medium"])
+    oracle_instant_client_version_short = var.oracle_instant_client_version_short
+  }
+}
+
+data "template_file" "db1_sql_template" {
+  template = file("./db_scripts/db1.sql")
+
+  vars = {
+    ATP_password                        = var.ATP_password
+  }
+}
+
+data "template_file" "app_py_template" {
+  template = file("./flask_dir/app.py")
+
+  vars = {
+    ATP_password                        = var.ATP_password
+    ATP_alias                           = join("",[var.ATP_database_db_name,"_medium"])
+    oracle_instant_client_version_short = var.oracle_instant_client_version_short
+  }
+}
+
+data "template_file" "app_sh_template" {
+  template = file("./flask_dir/app.sh")
+
+  vars = {
+    oracle_instant_client_version_short = var.oracle_instant_client_version_short
+  }
+}
+
+data "template_file" "sqlnet_ora_template" {
+  template = file("./flask_dir/sqlnet.ora")
+
+  vars = {
+    oracle_instant_client_version_short = var.oracle_instant_client_version_short
+  }
+}
+
+
 resource "null_resource" "compute-script1" {
   depends_on = [oci_core_instance.compute_instance1, oci_database_autonomous_database.ATPdatabase, oci_core_network_security_group_security_rule.ATPSecurityEgressGroupRule, oci_core_network_security_group_security_rule.ATPSecurityIngressGroupRules]
-  
   
   provisioner "remote-exec" {
     connection {
@@ -16,33 +70,17 @@ resource "null_resource" "compute-script1" {
       timeout     = "10m"
     }
     inline = [
-      "echo '== [compute_instance1] 1. Install Oracle instant client'",
-      "sudo -u root yum -y install oracle-release-el7",
-      "sudo -u root yum-config-manager --enable ol7_oracle_instantclient",
-      "sudo -u root yum -y install oracle-instantclient18.3-basic",
-      "sudo -u root yum -y install oracle-instantclient18.3-sqlplus",
-
-      "echo '== [compute_instance1] 2. Install Python3, and then with pip3 cx_Oracle and flask'",
-      "sudo -u root yum install -y python36",
-      "sudo -u root pip3 install cx_Oracle",
-      "sudo -u root pip3 install flask",
-
-      "echo '== [compute_instance1] 3. Disabling firewall and starting HTTPD service'",
-      "sudo -u root service firewalld stop",
-      
-      "echo '== [compute_instance1] 4. Prepare Flask directory structure'",
-      "sudo -u root mkdir /home/opc/templates",
-      "sudo -u root chown opc /home/opc/templates/",
-      "sudo -u root mkdir /home/opc/static/",
-      "sudo -u root chown opc /home/opc/static",
-      "sudo -u root mkdir /home/opc/static/css/",
-      "sudo -u root chown opc /home/opc/static/css/",
-      "sudo -u root mkdir /home/opc/static/img",
-      "sudo -u root chown opc /home/opc/static/img/"
-      ]
+    "mkdir /home/opc/templates",
+    "chown opc /home/opc/templates/",
+    "mkdir /home/opc/static/",
+    "chown opc /home/opc/static",
+    "mkdir /home/opc/static/css/",
+    "chown opc /home/opc/static/css/",
+    "mkdir /home/opc/static/img",
+    "chown opc /home/opc/static/img/"]
   }
 
-  provisioner "file" {
+    provisioner "file" {
     connection {
       type        = "ssh"
       user        = "opc"
@@ -94,8 +132,8 @@ resource "null_resource" "compute-script1" {
       agent       = false
       timeout     = "10m"
     }
-    source      = "flask_dir/"
-    destination = "/home/opc/"
+    content     = data.template_file.app_py_template.rendered
+    destination = "/home/opc/app.py"
   }
 
   provisioner "file" {
@@ -108,8 +146,50 @@ resource "null_resource" "compute-script1" {
       agent       = false
       timeout     = "10m"
     }
-    source      = "db_scripts/"
-    destination = "/home/opc/"
+    content     = data.template_file.app_sh_template.rendered
+    destination = "/home/opc/app.sh"
+  }
+
+  provisioner "file" {
+    connection {
+      type        = "ssh"
+      user        = "opc"
+      host        = oci_core_instance.compute_instance1.public_ip
+      private_key = tls_private_key.public_private_key_pair.private_key_pem
+      script_path = "/home/opc/myssh.sh"
+      agent       = false
+      timeout     = "10m"
+    }
+    content     = data.template_file.sqlnet_ora_template.rendered
+    destination = "/home/opc/sqlnet.ora"
+  }
+
+  provisioner "file" {
+    connection {
+      type        = "ssh"
+      user        = "opc"
+      host        = oci_core_instance.compute_instance1.public_ip
+      private_key = tls_private_key.public_private_key_pair.private_key_pem
+      script_path = "/home/opc/myssh.sh"
+      agent       = false
+      timeout     = "10m"
+    }
+    content     = data.template_file.db1_sh_template.rendered
+    destination = "/home/opc/db1.sh"
+  }
+
+  provisioner "file" {
+    connection {
+      type        = "ssh"
+      user        = "opc"
+      host        = oci_core_instance.compute_instance1.public_ip
+      private_key = tls_private_key.public_private_key_pair.private_key_pem
+      script_path = "/home/opc/myssh.sh"
+      agent       = false
+      timeout     = "10m"
+    }
+    content     = data.template_file.db1_sql_template.rendered
+    destination = "/home/opc/db1.sql"
   }
 
   provisioner "local-exec" {
@@ -138,7 +218,7 @@ resource "null_resource" "compute-script1" {
     destination = "/home/opc/${var.ATP_tde_wallet_zip_file}"
   }
 
-  provisioner "remote-exec" {
+  provisioner "file" {
     connection {
       type        = "ssh"
       user        = "opc"
@@ -148,12 +228,8 @@ resource "null_resource" "compute-script1" {
       agent       = false
       timeout     = "10m"
     }
-    inline = [
-      "echo '== [compute_instance1] 4. Unzip TDE wallet zip file'",
-      "sudo -u root unzip -o /home/opc/${var.ATP_tde_wallet_zip_file} -d /usr/lib/oracle/18.3/client64/lib/network/admin/",
-      
-      "echo '== [compute_instance1] 5. Move sqlnet.ora to /usr/lib/oracle/18.3/client64/lib/network/admin/'",
-      "sudo -u root cp /home/opc/sqlnet.ora /usr/lib/oracle/18.3/client64/lib/network/admin/"]
+    content     = data.template_file.bootstrap_template.rendered
+    destination = "/tmp/bootstrap.sh"
   }
 
   provisioner "remote-exec" {
@@ -167,41 +243,8 @@ resource "null_resource" "compute-script1" {
       timeout     = "10m"
     }
     inline = [
-      "echo '== [compute_instance1] 6. Create DEPT table in ATP'",
-      "sudo -u root sed -i 's/ATP_password/${var.ATP_password}/g' /home/opc/db1.sql",
-      "sudo -u root sed -i 's/ATP_password/${var.ATP_password}/g' /home/opc/db1.sh",
-      "sudo -u root sed -i 's/ATP_database_db_name/${var.ATP_database_db_name}/g' /home/opc/db1.sh",
-      "sudo -u root chmod +x /home/opc/db1.sh",
-      "sudo -u root /home/opc/db1.sh"
-    ]
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      user        = "opc"
-      host        = oci_core_instance.compute_instance1.public_ip
-      private_key = tls_private_key.public_private_key_pair.private_key_pem
-      script_path = "/home/opc/myssh.sh"
-      agent       = false
-      timeout     = "10m"
-    }
-    inline = [
-      "echo '== [compute_instance1] 7. Run Flask with ATP access'",
-      "sudo -u root python3 --version",
-      "sudo -u root chmod +x /home/opc/app.sh",
-      "sudo -u root sed -i 's/ATP_password/${var.ATP_password}/g' /home/opc/app.py",
-      "sudo -u root sed -i 's/ATP_alias/${var.ATP_database_db_name}_medium/g' /home/opc/app.py",
-      "sudo -u root nohup /home/opc/app.sh > /home/opc/app.log &",
-      "echo 'nohup /home/opc/app.sh > /home/opc/app.log &' | sudo tee -a  /etc/rc.d/rc.local",
-      "sudo -u root chmod +x /etc/rc.d/rc.local",
-      "sudo -u root systemctl enable rc-local",
-      "sudo -u root systemctl status rc-local.service",
-      "sudo -u root systemctl start rc-local",
-      "sudo -u root systemctl stop firewalld",
-      "sudo -u root systemctl disable firewalld",
-      "sleep 5",
-    "sudo -u root ps -ef | grep app"]
+    "chmod +x /tmp/bootstrap.sh",
+    "sudo /tmp/bootstrap.sh"]
   }
   
 }
