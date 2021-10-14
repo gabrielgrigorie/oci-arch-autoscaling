@@ -63,8 +63,8 @@ ATP_data_guard_enabled = false # set the value to true only when you want to ena
 # Region
 region = "<oci_region>"
 
-# Availablity Domain 
-availablity_domain_name = "<availablity_domain_name>"
+# Availability Domain 
+availability_domain_name = "<availability_domain_name>"
 
 # Compartment
 compartment_ocid = "<compartment_ocid>"

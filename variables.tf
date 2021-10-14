@@ -10,7 +10,7 @@ variable "private_key_path" {}
 variable "region" {}
 variable "ATP_password" {}
 
-variable "availablity_domain_name" {}
+variable "availability_domain_name" {}
 
 variable "release" {
   description = "Reference Architecture Release (OCI Architecture Center)"
@@ -29,15 +29,15 @@ variable "linux_os_version" {
 }
 
 variable "instance_shape" {
-   default = "VM.Standard.E3.Flex"
+  default = "VM.Standard.E3.Flex"
 }
 
 variable "instance_flex_shape_ocpus" {
-    default = 1
+  default = 1
 }
 
 variable "instance_flex_shape_memory" {
-    default = 10
+  default = 10
 }
 
 variable "ssh_public_key" {
@@ -102,8 +102,8 @@ variable "ATP_private_endpoint_label" {
   default = "ATPPrivateEndpoint"
 }
 
-variable  "ATP_data_guard_enabled" {
-  default = false 
+variable "ATP_data_guard_enabled" {
+  default = false
 }
 
 # Dictionary Locals
